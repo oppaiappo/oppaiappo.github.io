@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="ja" xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<meta http-equiv="Content-Type"        content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Language"    content="ja" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type"  content="text/css" />
+
+<!-- Bootstrap core CSS -->
+<link href="./css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap theme -->
+<link href="./css/bootstrap-theme.min.css" rel="stylesheet">
+
+<!-- スマホ表示最適化 -->
+<meta name="viewport"
+	content="width=320,
+		height=480,
+		initial-scale=1.0,
+		minimum-scale=1.0,
+		maximum-scale=2.0,
+		user-scalable=yes" />
+
+<!-- 入力時の拡大表示を止めるため -->
+<style type="text/css">
+input,select {
+  font-size: 16px;
+}
+</style>
+
+<script type="text/javascript" src="./js/bignumber.min.js"></script>
+<script>
+
+const KOUBOUHI_MAX = 2;
+const KAKUTOKU_MAX = 3300;
+const OUGI_ARI_MAG = 1.5;
+const OUGI_NASHI_MAG = 1.0;
+const HOSI_GP_5 = 1500;
+const HOSI_GP_4 = 1200;
+const HOSI_GP_3 = 1000;
+const HOSI_GP_2 = 800;
+const HOSI_GP_1 = 500;
+
+
+BigNumber.config({ DECIMAL_PLACES: 5 })
+
+var bougyo_v;
+var koubouhi_v;
+var full_v;
+
+function onButtonClick(){
+	var kakutoku = document.forms.bougyo.kakutoku_input.value;
+	var kougeki_use = document.forms.bougyo.kougeki_use_input.value;
+	var kougeki_max = document.forms.bougyo.kougeki_max_input.value;
+	var hoshi_input_obj = document.forms.bougyo.hoshi_input;
+	var hoshi = hoshi_input_obj.options[hoshi_input_obj.selectedIndex].value;
+	var ougi = null;
+	var ougi_checked = document.forms.bougyo.ougi_input.checked;
+	if (ougi_checked) {
+		ougi = document.forms.bougyo.ougi_input.value;
+	}
+	var bouei = null;
+	var bouei_checked = document.forms.bougyo.bouei_input.checked;
+	if (bouei_checked) {
+		bouei = document.forms.bougyo.bouei_input.value;
+	}
+	var kougeki = document.forms.bougyo.kougeki_input.value;
+
+	full_v = null;
+
+	var result = keisanBougyo(kougeki, ougi, hoshi, kakutoku, bouei, kougeki_use, kougeki_max);
+
+	var target = document.getElementById("output");
+
+	target.innerHTML = "";
+
+	if(true != result) {
+		target.innerHTML = "<h4><span class=\"label label-danger\">範囲外です。入力値を確認してください。</label></h4>";
+		return;
+	}
+	target.innerHTML += "<h3><span class=\"label label-primary\">" + "攻防比：" + koubouhi_v + "</label></h3>";
+	if (kougeki) {
+		target.innerHTML += "<h3><span class=\"label label-info\">" + "防御力：" + bougyo_v + "</label></h3>";
+	}
+	if (full_v) {
+		target.innerHTML += "<h3><span class=\"label label-success\">" + "フルパン：" + full_v + "</label></h3>";
+	}
+
+	return;
+}
+
+function getOugiMag(ougi){
+	var mag = 1;
+	switch (parseInt(ougi)) {
+	case 1:
+		mag = OUGI_ARI_MAG;
+		break;
+	default:
+		mag = OUGI_NASHI_MAG;
+		break;
+	}
+
+	return mag;
+}
+
+function getHoshiGp(hoshi){
+	var gp = 0;
+	switch (parseInt(hoshi)) {
+	case 5:
+		gp = HOSI_GP_5;
+		break;
+	case 4:
+		gp = HOSI_GP_4;
+		break;
+	case 3:
+		gp = HOSI_GP_3;
+		break;
+	case 2:
+		gp = HOSI_GP_2;
+		break;
+	case 1:
+		gp = HOSI_GP_1;
+		break;
+	default:
+		break;
+	}
+
+	return gp;
+}
+
+function keisanBougyo(kougeki, ougi, hoshi, kakutoku, bouei, kougeki_use, kougeki_max){
+	bougyo = 0;
+
+	var ougi_mag = new BigNumber(parseFloat(getOugiMag(ougi)));
+
+	if(isNaN(parseInt(kakutoku))) {
+		return false;
+	}
+
+	if (parseFloat(kakutoku) > ougi_mag.mul(KAKUTOKU_MAX)) {
+		return false;
+	}
+
+	if ((!kougeki_use || !kougeki_max) && (kougeki_use != kougeki_max)) {
+		return false;
+	}
+
+	var kakutoku   = new BigNumber(parseInt(kakutoku));
+	var kakutoku_v = new BigNumber(parseInt(kakutoku));
+	if ("1" == bouei) {
+		kakutoku_v = kakutoku_v.mul(2);
+	}
+
+	var kougeki_use_n = 0;
+	var kougeki_max_n = 0;
+	if (kougeki_use) {
+		kougeki_use_n = new BigNumber(kougeki_use);
+	}
+	if (kougeki_max) {
+		kougeki_max_n = new BigNumber(kougeki_max);
+	}
+
+	if (kougeki_use_n > kougeki_max_n) {
+		return false;
+	}
+
+	var mag = new BigNumber(1.1);
+	if (kougeki_use != kougeki_max) {
+		mag = kougeki_use_n.div(kougeki_max_n);
+	}
+
+	//document.write( ougi_mag + "<br>");
+
+	var gp = new BigNumber(parseInt(getHoshiGp(hoshi)));
+
+	var gp_k = new BigNumber(kakutoku_v.div(mag));
+	gp_k = gp_k.div(ougi_mag);
+
+	var koubouhi = gp_k.div(gp);
+	koubouhi_v = koubouhi.round(3).toPrecision();
+	var koubouhi_g = gp.div(gp_k);
+	var kougeki = new BigNumber(parseInt(kougeki));
+
+	if (koubouhi >= KOUBOUHI_MAX) {
+		var bougyo = kougeki.mul(0.5);
+		bougyo_v = bougyo.round(0).toPrecision();
+		bougyo_v += "以下";
+		koubouhi_v = "2.0以上";
+	} else {
+		var bougyo = kougeki.mul(koubouhi_g);
+		bougyo_v = bougyo.round(0).toPrecision();
+	}
+
+	if (kougeki_use != kougeki_max) {
+		var full = new BigNumber(kakutoku.div(mag));
+		full = full.mul(1.1);
+		if (parseFloat(full) > ougi_mag.mul(KAKUTOKU_MAX)) {
+			full_v = ougi_mag.mul(KAKUTOKU_MAX);
+		}else{
+			full_v = full.round(0).toPrecision();
+		}
+	}
+
+	return true;
+}
+
+</script>
+</head>
+<body>
+<div class="container theme-showcase" role="main">
+<form name="bougyo" id="bougyo" action="">
+	<table class="table table-striped" style="width:300px">
+		<tr><th colspan="2"><h3><span class="label label-success">勝利時の攻防比・防御力計算</span></h3></th></tr>
+		<tr><td>獲得GP</td>
+		<td>
+			<input type="text" name="kakutoku_input" id="kakutoku_input" value="" style="width:100px; ime-mode: disabled;" />
+		</td></tr>
+		<tr><td>攻撃比率</td>
+		<td>
+			<input type="text" name="kougeki_use_input" id="kougeki_use_input" value="" style="width:50px; ime-mode: disabled;" />/
+			<input type="text" name="kougeki_max_input" id="kougeki_max_input" value="" style="width:50px; ime-mode: disabled;" />
+		</td></tr>
+		<tr><td>☆</td>
+		<td>
+			<select name="hoshi_input" id="hoshi_input">
+			<option value="5">☆5</option>
+			<option value="4">☆4</option>
+			<option value="3">☆3</option>
+			<option value="2">☆2</option>
+			<option value="1">☆1</option>
+			</select>
+		</td></tr>
+		<tr><td>扇使用</td>
+		<td>
+			<input type="checkbox" name="ougi_input" value="1">
+		</td></tr>
+		<tr><td>(相手)防衛<br />または新兵</td>
+		<td>
+			<input type="checkbox" name="bouei_input" value="1">
+		</td></tr>
+		<tr><td>(相手)攻撃力</td>
+		<td>
+			<input type="text" name="kougeki_input" id="kougeki_input" value="" style="width:100px; ime-mode: disabled;" />
+		</td></tr>
+		<tr><td colspan="2"><input type="button" class="btn btn-success" style="width:240px" value="実行" onclick="onButtonClick();" /></td></tr>
+		<tr><td colspan="2"><div id="output"></div></td></tr>
+	</table>
+</form>
+</div>
+</body>
+</html>
