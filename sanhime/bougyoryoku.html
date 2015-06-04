@@ -212,12 +212,12 @@ function keisanBougyo(kougeki, ougi, hoshi, kakutoku, bouei, kougeki_use, kougek
 		<tr><th colspan="2"><h3><span class="label label-success">勝利時の攻防比・防御力計算</span></h3></th></tr>
 		<tr><td>獲得GP</td>
 		<td>
-			<input type="text" name="kakutoku_input" id="kakutoku_input" value="" style="width:100px; ime-mode: disabled;" />
+			<input type="tel" name="kakutoku_input" id="kakutoku_input" value="" style="width:100px; ime-mode: disabled;" />
 		</td></tr>
 		<tr><td>攻撃比率</td>
 		<td>
-			<input type="text" name="kougeki_use_input" id="kougeki_use_input" value="" style="width:50px; ime-mode: disabled;" />/
-			<input type="text" name="kougeki_max_input" id="kougeki_max_input" value="" style="width:50px; ime-mode: disabled;" />
+			<input type="tel" name="kougeki_use_input" id="kougeki_use_input" value="" style="width:50px; ime-mode: disabled;" />/
+			<input type="tel" name="kougeki_max_input" id="kougeki_max_input" value="" style="width:50px; ime-mode: disabled;" />
 		</td></tr>
 		<tr><td>☆</td>
 		<td>
@@ -239,10 +239,11 @@ function keisanBougyo(kougeki, ougi, hoshi, kakutoku, bouei, kougeki_use, kougek
 		</td></tr>
 		<tr><td>(相手)攻撃力</td>
 		<td>
-			<input type="text" name="kougeki_input" id="kougeki_input" value="" style="width:100px; ime-mode: disabled;" />
+			<input type="tel" name="kougeki_input" id="kougeki_input" value="" style="width:100px; ime-mode: disabled;" />
 		</td></tr>
 		<tr><td colspan="2"><input type="button" class="btn btn-success" style="width:240px" value="実行" onclick="onButtonClick();" /></td></tr>
 		<tr><td colspan="2"><div id="output"></div></td></tr>
+		<tr><td colspan="2" align="right"><h5><div class="panel panel-success"><div class="panel-heading">created by おっπ先生<div></div></h5></td></tr>
 	</table>
 </form>
 </div>
