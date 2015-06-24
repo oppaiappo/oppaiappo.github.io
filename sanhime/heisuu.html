@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="ja" xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<meta http-equiv="Content-Type"        content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Language"    content="ja" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type"  content="text/css" />
+
+<!-- Bootstrap core CSS -->
+<link href="./css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap theme -->
+<link href="./css/bootstrap-theme.min.css" rel="stylesheet">
+
+<!-- スマホ表示最適化 -->
+<meta name="viewport"
+	content="width=320,
+		height=480,
+		initial-scale=1.0,
+		minimum-scale=1.0,
+		maximum-scale=2.0,
+		user-scalable=yes" />
+
+<!-- 入力時の拡大表示を止めるため -->
+<style type="text/css">
+input,select {
+  font-size: 16px;
+}
+</style>
+<script>
+
+function onButtonClick(){
+
+	var detail_string = new Array();
+	var half_detail_string = new Array();
+
+	var heisuu = document.forms.heisuu.heisuu_input.value;
+	var count = keisanHeisuu(heisuu, detail_string);
+	var half_count = keisanHeisuu(parseInt(heisuu / 2 + 0.5), half_detail_string);
+
+	var output = document.getElementById("output");
+	output.innerHTML  = "<h4><span class=\"label label-primary\">フル</label></h4>";
+	output.innerHTML += "<h4><span class=\"label label-primary\">" + "攻撃可能回数：" + count + "</label></h4>";
+
+	var detail = document.getElementById("detail");
+	detail.innerHTML = detail_string[0];
+
+	var half_output = document.getElementById("half_output");
+	half_output.innerHTML  = "<h4><span class=\"label label-info\">ハーフ</label></h4>";
+	half_output.innerHTML += "<h4><span class=\"label label-info\">" + "攻撃可能回数：" + half_count + "</label></h4>";
+
+	var half_detail = document.getElementById("half_detail");
+	half_detail.innerHTML = half_detail_string[0];
+
+	return;
+}
+
+function keisanHeisuu(heisuu, $detail){
+	var count = 0;
+	var heisuu_gen = heisuu;
+
+	$detail[0] = "";
+
+	//document.write( "攻撃兵士数:" + heisuu + "<br>");
+
+	for (var count = 0; heisuu_gen >= 0; ) {
+		count += 1;
+
+		base = parseInt(heisuu_gen / 10);
+
+		if (0 != (heisuu_gen % 10)){
+			base += 1;
+		}
+
+		$detail[0] += "変動:" + heisuu_gen + "(" + base + ")" + "<br />";
+
+		heisuu_gen -= base;
+
+		if (heisuu_gen <= 0) {
+			break;
+		}
+	}
+	
+	//document.write( "攻撃可能回数:" + count + "<br>");
+	return count;
+}
+
+</script>
+</head>
+<body>
+<div class="container theme-showcase" role="main">
+<form name="heisuu" id="heisuu" action="">
+	<table class="table table-striped" style="width:300px">
+		<tr><th colspan="2"><h3><span class="label label-success">攻撃可能回数</span></h3></th></tr>
+		<tr><td>攻撃兵士数</td>
+		<td>
+			<input type="tel" name="heisuu_input" id="heisuu_input" value="" />
+		<!-- Enter Post回避-->
+		<input type="text" name="dummy" style="position:absolute;visibility:hidden">
+		</td></tr>
+		<tr><td colspan="2" align="center"><input type="button" class="btn btn-success" style="width:240px" value="実行" onclick="onButtonClick();" /></td></tr>
+		<tr><td><div id="output"></div></td><td><div id="half_output"></div></td></tr>
+		<tr><td><div id="detail"></div></td><td><div id="half_detail"></div></td></tr>
+		<tr><td colspan="2" align="center"><h5><a href="index.html"><span class="alert alert-success">トップに戻る</span></a></h5></td></tr>
+		<tr><td colspan="2" align="right"><h5><div class="panel panel-success"><div class="panel-heading">created by おっπ先生<div></div></h5></td></tr>
+	</table>
+</form>
+</div>
+</body>
+</html>
