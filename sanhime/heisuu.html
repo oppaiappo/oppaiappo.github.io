@@ -90,12 +90,12 @@ function keisanHeisuu(heisuu, $detail){
 <div class="container theme-showcase" role="main">
 <form name="heisuu" id="heisuu" action="">
 	<table class="table table-striped" style="width:300px">
-		<tr><th colspan="2"><h3><span class="label label-success">攻撃可能回数</span></h3></th></tr>
-		<tr><td>攻撃兵士数</td>
-		<td>
-			<input type="tel" name="heisuu_input" id="heisuu_input" value="" />
-		<!-- Enter Post回避-->
-		<input type="text" name="dummy" style="position:absolute;visibility:hidden">
+		<tr><th colspan="2"><h3><span class="label label-success">　　　攻撃可能回数　　　　</span></h3></th></tr>
+		<tr><td colspan="2" align="center">
+			<div>攻撃兵士数</div>
+			<div><input type="tel" name="heisuu_input" id="heisuu_input" value="" style="width:50px; ime-mode: disabled;" /></div>
+			<!-- Enter Post回避-->
+			<input type="text" name="dummy" style="position:absolute;visibility:hidden">
 		</td></tr>
 		<tr><td colspan="2" align="center"><input type="button" class="btn btn-success" style="width:240px" value="実行" onclick="onButtonClick();" /></td></tr>
 		<tr><td><div id="output"></div></td><td><div id="half_output"></div></td></tr>
