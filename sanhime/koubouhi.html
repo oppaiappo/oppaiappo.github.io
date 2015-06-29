@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="ja" xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<meta http-equiv="Content-Type"        content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Language"    content="ja" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type"  content="text/css" />
+
+<!-- Bootstrap core CSS -->
+<link href="./css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap theme -->
+<link href="./css/bootstrap-theme.min.css" rel="stylesheet">
+
+<!-- スマホ表示最適化 -->
+<meta name="viewport"
+	content="width=320,
+		height=480,
+		initial-scale=1.0,
+		minimum-scale=1.0,
+		maximum-scale=2.0,
+		user-scalable=yes" />
+
+<!-- 入力時の拡大表示を止めるため -->
+<style type="text/css">
+input,select {
+  font-size: 16px;
+}
+</style>
+
+<script type="text/javascript" src="./js/bignumber.min.js"></script>
+<script>
+
+BigNumber.config({ DECIMAL_PLACES: 5 })
+
+function onButtonClick(){
+
+	var kougeki_before_input = document.forms.plusone.kougeki_before_input.value;
+	var bougyo_before_input  = document.forms.plusone.bougyo_before_input.value;
+
+	var koubouhi_before = koubouhi(kougeki_before_input, bougyo_before_input);
+
+	var koubou_before_output = document.getElementById("koubou_before_output");
+	koubou_before_output.innerHTML = "";
+
+	if (!isNaN(koubouhi_before)) {
+		koubou_before_output.innerHTML = "<h3><span class=\"label label-primary\">" + koubouhi_before + "</label></h3>";
+	}
+
+	var kougeki_after_input = document.forms.plusone.kougeki_after_input.value;
+	var bougyo_after_input  = document.forms.plusone.bougyo_after_input.value;
+
+	var kougeki_after = parseInt(kougeki_before_input) + parseInt(kougeki_after_input);
+	var bougyo_after  = parseInt(bougyo_before_input) + parseInt(bougyo_after_input);
+
+	var koubouhi_after = koubouhi(kougeki_after, bougyo_after);
+
+	var koubou_after_output = document.getElementById("koubou_after_output");
+	koubou_after_output.innerHTML = "";
+	if (!isNaN(koubouhi_after)) {
+		koubou_after_output.innerHTML = "<h3><span class=\"label label-info\">" + koubouhi_after + "</label></h3>";
+	}
+
+	return;
+}
+
+function koubouhi(kougeki, bougyo){
+
+	var kougeki = new BigNumber(parseInt(kougeki));
+	var bougyo = new BigNumber(parseInt(bougyo));
+
+	return kougeki.div(bougyo).round(3).toPrecision();
+}
+
+</script>
+</head>
+<body>
+<div class="container theme-showcase" role="main">
+<form name="plusone" id="plusone" action="">
+	<table class="table table-striped" style="width:300px">
+		<tr><th colspan="3"><h3><span class="label label-success">攻防比</span></h3></th></tr>
+		<tr><td></td><td><div>現状</div></td><td><div>追加武将</div></td></tr>
+		<tr><td>
+			<div>攻撃力</div>
+		</td><td>
+			<div><input type="tel" name="kougeki_before_input" id="kougeki_before_input" value="" style="width:80px; ime-mode: disabled;" /></div>
+		</td><td>
+			<div><input type="tel" name="kougeki_after_input" id="kougeki_after_input" value="" style="width:80px; ime-mode: disabled;" /></div>
+		</td></tr>
+		<tr><td>
+			<div>防御力</div>
+		</td><td>
+			<div><input type="tel" name="bougyo_before_input" id="bougyo_before_input" value="" style="width:80px; ime-mode: disabled;" /></div>
+		</td>		<td>
+			<div><input type="tel" name="bougyo_after_input" id="bougyo_after_input" value="" style="width:80px; ime-mode: disabled;" /></div>
+		</td></tr>
+		<tr><td colspan="3" align="center"><input type="button" class="btn btn-success" style="width:240px" value="実行" onclick="onButtonClick();" /></td></tr>
+		<tr><td><div>攻防比</div></td><td><div id="koubou_before_output"></div></td><td><div id="koubou_after_output"></div></td></tr>
+		<tr><td colspan="3" align="center"><h5><a href="index.html"><span class="alert alert-success">トップに戻る</span></a></h5></td></tr>
+		<tr><td colspan="3" align="right"><h5><div class="panel panel-success"><div class="panel-heading">created by おっπ先生</div></div></h5></td></tr>
+	</table>
+</form>
+</div>
+</body>
+</html>
