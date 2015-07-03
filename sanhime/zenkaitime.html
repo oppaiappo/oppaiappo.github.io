@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="ja" xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<meta http-equiv="Content-Type"        content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Language"    content="ja" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type"  content="text/css" />
+
+<!-- Bootstrap core CSS -->
+<link href="./css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap theme -->
+<link href="./css/bootstrap-theme.min.css" rel="stylesheet">
+
+<!-- スマホ表示最適化 -->
+<meta name="viewport"
+	content="width=320,
+		height=480,
+		initial-scale=1.0,
+		minimum-scale=1.0,
+		maximum-scale=2.0,
+		user-scalable=yes" />
+
+<!-- 入力時の拡大表示を止めるため -->
+<style type="text/css">
+input,select {
+  font-size: 16px;
+}
+</style>
+
+<script type="text/javascript" src="./js/bignumber.min.js"></script>
+<script>
+
+function showClock() {
+
+	var kougeki_now = document.forms.zenkaitime.kougeki_now_input.value;
+	var kougeki_max = document.forms.zenkaitime.kougeki_max_input.value;
+
+	var nowTime = new Date();
+
+	var hour = nowTime.getHours();
+	var min  = nowTime.getMinutes();
+	var sec  = nowTime.getSeconds();
+
+	//alert(parseInt(kougeki_now) + 1);
+
+	if ((min % 2 == 0) && (sec == 0)) {
+		if (parseInt(kougeki_now) < parseInt(kougeki_max)) {
+			document.forms.zenkaitime.kougeki_now_input.value = (parseInt(kougeki_now) + 1);
+			kougeki_now = document.forms.zenkaitime.kougeki_now_input.value;
+		}
+	}
+
+	var zenkaiTimeStr = getZekaiTime(hour, min, sec, kougeki_now, kougeki_max);
+
+	document.getElementById("zenkai_time").innerHTML = zenkaiTimeStr;
+
+	var nowTimeStr = zeroFill(hour, min, sec);
+
+	document.getElementById("now_time").innerHTML = nowTimeStr;
+}
+
+function getZekaiTime(hour, min, sec, kougeki_now, kougeki_max) {
+
+	var zan_hour = hour;
+	var zan_min  = min;
+	var zan_kougeki = (kougeki_max - kougeki_now) * 2;
+
+	if (zan_kougeki > 0) {
+		zan_min += zan_kougeki;
+
+		if ((min % 2 != 0)) {
+			zan_min -= 1;
+		}
+
+		if (zan_min > 60) {
+			zan_hour += parseInt(zan_min / 60);
+			zan_min -= (60 * parseInt(zan_min / 60));
+		}
+
+		if (zan_hour > 24) {
+			zan_hour -= (24 * parseInt(zan_hour / 24));
+		}
+	}
+
+	return zeroFill(zan_hour, zan_min, "0");
+}
+
+function zeroFill(hour, min, sec) {
+	return ("0" + hour).slice(-2) + ":" + ("0" + min).slice(-2) + ":" + ("0" + sec).slice(-2);
+}
+
+setInterval('showClock()',1000);
+
+</script>
+</head>
+<body>
+<div class="container theme-showcase" role="main">
+<form name="zenkaitime" id="zenkaitime" action="">
+	<table class="table table-striped" style="width:300px">
+		<tr><th colspan="2"><h3><span class="label label-success">全快時刻</span></h3></th></tr>
+		<tr><td colspan="2">
+			<div>攻撃兵士数</div>
+			<div>
+			<input type="tel" name="kougeki_now_input" id="kougeki_now_input" value="" style="width:80px; ime-mode: disabled;" />
+			/
+			<input type="tel" name="kougeki_max_input" id="kougeki_max_input" value="" style="width:80px; ime-mode: disabled;" />
+			</div>
+		</td></tr>
+		<tr><td>全快時刻</td><td><div id="zenkai_time"></div></td></tr>
+		<tr><td>現時刻</td><td><div id="now_time"></div></td></tr>
+		<tr><td colspan="2" align="center"><h5><a href="index.html"><span class="alert alert-success">トップに戻る</span></a></h5></td></tr>
+		<tr><td colspan="2" align="right"><h5><div class="panel panel-success"><div class="panel-heading">created by おっπ先生</div></div></h5></td></tr>
+	</table>
+</form>
+</div>
+</body>
+</html>
