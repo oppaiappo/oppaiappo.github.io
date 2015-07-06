@@ -144,6 +144,10 @@ function keisanBougyo(kougeki, ougi, hoshi, kakutoku, bouei, kougeki_use, kougek
 		return false;
 	}
 
+	if (parseInt(kougeki_use_n) > parseInt(kougeki_max_n)) {
+		return false;
+	}
+
 	var kakutoku   = new BigNumber(parseInt(kakutoku));
 	var kakutoku_v = new BigNumber(parseInt(kakutoku));
 	if ("1" == bouei) {
@@ -157,10 +161,6 @@ function keisanBougyo(kougeki, ougi, hoshi, kakutoku, bouei, kougeki_use, kougek
 	}
 	if (kougeki_max) {
 		kougeki_max_n = new BigNumber(kougeki_max);
-	}
-
-	if (kougeki_use_n > kougeki_max_n) {
-		return false;
 	}
 
 	var mag = new BigNumber(1.1);
